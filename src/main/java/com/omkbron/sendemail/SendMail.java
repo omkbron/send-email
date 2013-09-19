@@ -3,8 +3,7 @@ package com.omkbron.sendemail;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
@@ -23,35 +22,62 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+/**
+ * @author omkbron
+ *
+ */
 public class SendMail {
 	private BeanMail beanMail;
 
+	/**
+	 * Inicializa el objeto <code>BeanMail</code> <p>
+	 * 
+	 * El cual sirve para configurar los parametros necesarios para enviar el mail <p>
+	 * @param beanMail BeanMail object
+	 */
 	public void setup(BeanMail beanMail) {
 		this.beanMail = beanMail;
 	}
 
+	/**
+	 * Envía el mail con la configuracion obtenida del objeto
+	 * <code>BeanMail</code> <p> inicializado con el metodo
+	 * <code>setup</code>
+	 * 
+	 * @throws AddressException
+	 * @throws MessagingException
+	 * @throws IOException
+	 * @throws TemplateException
+	 */
 	public void send() throws AddressException, MessagingException, IOException, TemplateException {
-		Session session = Session.getDefaultInstance(beanMail.getMailProps(),
-				new Authenticator() {
-					@Override
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(beanMail.getUserName(), beanMail.getPassword());
-					}
-				});
+		Session session; 
+		if (Boolean.parseBoolean(beanMail.getMailProps().getProperty("mail.smtp.auth"))){
+			session = Session.getDefaultInstance(beanMail.getMailProps(),
+					new Authenticator() {
+				@Override
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(beanMail.getUserName(), beanMail.getPassword());
+				}
+			});
+		} else {
+			session = Session.getDefaultInstance(beanMail.getMailProps());
+			session.setDebug(false);
+		}
 		
 		Message message = new MimeMessage(session);
 		
 		message.setFrom(beanMail.getFrom());
 		message.setRecipients(Message.RecipientType.TO, beanMail.getRecipients());
 		message.setSubject(beanMail.getSubject());
+		message.setSentDate(new Date());
+		message.saveChanges();
 		
 		BodyPart body = new MimeBodyPart();
 		
 		Configuration cfg = new Configuration();
 		Template template = cfg.getTemplate(beanMail.getHtmlTemplate());
-		Map<String, String> rootMap = getHtmlBodyProps();
 		Writer out = new StringWriter();
-		template.process(rootMap, out);
+		template.process(beanMail.getHtmlBodyProps(), out);
 		
 		body.setContent(out.toString(), "text/html");
 		
@@ -62,14 +88,7 @@ public class SendMail {
 		
 		Transport.send(message);
 		
-		System.out.println("Enviado...");
+		System.out.println("Mensaje enviado...");
 	}
 
-	private Map<String, String> getHtmlBodyProps() {
-		Map<String, String> htmlBodyProps = new HashMap<String, String>();
-		htmlBodyProps.put("to", "Juan Camaney");
-		htmlBodyProps.put("from", "Omar Velasco");
-		htmlBodyProps.put("body", "El cuerpo del mensaje como propiedad");
-		return htmlBodyProps;
-	}
 }

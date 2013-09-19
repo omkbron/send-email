@@ -1,5 +1,6 @@
 package com.omkbron.sendemail;
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.internet.InternetAddress;
@@ -12,6 +13,20 @@ public class BeanMail {
 	private InternetAddress [] recipients;
 	private String subject;
 	private String htmlTemplate;
+	private Map<String, Object> htmlBodyProps;
+
+	public BeanMail(Properties mailProps, String userName, String password,
+			InternetAddress from, InternetAddress[] recipients, String subject,
+			String htmlTemplate, Map<String, Object> htmlBodyProps) {
+		this.mailProps = mailProps;
+		this.userName = userName;
+		this.password = password;
+		this.from = from;
+		this.recipients = recipients;
+		this.subject = subject;
+		this.htmlTemplate = htmlTemplate;
+		this.htmlBodyProps = htmlBodyProps;
+	}
 
 	public Properties getMailProps() {
 		return mailProps;
@@ -67,5 +82,13 @@ public class BeanMail {
 	
 	public void setHtmlTemplate(String htmlTemplate) {
 		this.htmlTemplate = htmlTemplate;
+	}
+	
+	public Map<String, Object> getHtmlBodyProps() {
+		return htmlBodyProps;
+	}
+	
+	public void setHtmlBodyProps(Map<String, Object> htmlBodyProps) {
+		this.htmlBodyProps = htmlBodyProps;
 	}
 }
