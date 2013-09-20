@@ -43,8 +43,9 @@ public class Principal {
 //						new InternetAddress("eesqueda@magnabyte.com.mx"),
 						new InternetAddress("ovelasco@hotmail.com")},
 				props.getProperty("email.subject"), props.getProperty("email.template"),
-				getHtmlBodyProps(), new ArrayList<Attachment>(), new ArrayList<CidImage>());
-
+				getHtmlBodyProps());
+		beanMail.setAttachments(new ArrayList<Attachment>());
+		beanMail.setCidImages(new ArrayList<CidImage>());
 		sendMail.initialize(beanMail);
 		sendMail.setupMail();
 		sendMail.send();

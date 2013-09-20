@@ -57,6 +57,7 @@ public class SendMail {
 		
 		message.setFrom(beanMail.getFrom());
 		message.setRecipients(Message.RecipientType.TO, beanMail.getRecipients());
+		message.setRecipients(Message.RecipientType.BCC, beanMail.getRecipients());
 		message.setSubject(beanMail.getSubject());
 		message.setSentDate(new Date());
 		message.saveChanges();
@@ -85,24 +86,27 @@ public class SendMail {
 
 	private void addAttachments() throws MessagingException {
 		BodyPart body;
-		for (Attachment attachment : beanMail.getAttachments()) {
-			body = new MimeBodyPart();
-			DataSource fds = new FileDataSource(attachment.getFileName());
-			body.setDataHandler(new DataHandler(fds));
-			body.setFileName(attachment.getFileName());
-			multipart.addBodyPart(body);			
+		if (beanMail.getAttachments() != null) {
+			for (Attachment attachment : beanMail.getAttachments()) {
+				body = new MimeBodyPart();
+				DataSource fds = new FileDataSource(attachment.getFileName());
+				body.setDataHandler(new DataHandler(fds));
+				body.setFileName(attachment.getFileName());
+				multipart.addBodyPart(body);			
+			}
 		}
-		
 	}
 	
 	private void addCidImages() throws MessagingException {
 		BodyPart body;
-		for (CidImage cidImage : beanMail.getCidImages()) {
-			body = new MimeBodyPart();
-			DataSource fds = new FileDataSource(cidImage.getFileName());
-			body.setDataHandler(new DataHandler(fds));
-			body.setHeader("Content-ID", cidImage.getCid());
-			multipart.addBodyPart(body);
+		if (beanMail.getCidImages() != null) {
+			for (CidImage cidImage : beanMail.getCidImages()) {
+				body = new MimeBodyPart();
+				DataSource fds = new FileDataSource(cidImage.getFileName());
+				body.setDataHandler(new DataHandler(fds));
+				body.setHeader("Content-ID", cidImage.getCid());
+				multipart.addBodyPart(body);
+			}
 		}
 	}
 
@@ -111,5 +115,4 @@ public class SendMail {
 		
 		System.out.println("Mensaje enviado...");
 	}
-
 }

@@ -12,7 +12,8 @@ public class BeanMail {
 	private String userName;
 	private String password;
 	private InternetAddress from;
-	private InternetAddress [] recipients;
+	private InternetAddress[] recipients;
+	private InternetAddress[] recipientsBcc;
 	private String subject;
 	private String htmlTemplate;
 	private Map<String, Object> htmlBodyProps;
@@ -36,17 +37,18 @@ public class BeanMail {
 			InternetAddress from, InternetAddress[] recipients, String subject,
 			String htmlTemplate, Map<String, Object> htmlBodyProps,
 			List<Attachment> attachments, List<CidImage> cidImages) {
-		this(mailProps, userName, password, from, recipients, subject, htmlTemplate, htmlBodyProps);
+		this(mailProps, userName, password, from, recipients, subject,
+				htmlTemplate, htmlBodyProps);
 		this.attachments = attachments;
 		this.cidImages = cidImages;
 	}
-	
+
 	public BeanMail(Properties mailProps, String userName, String password,
-			InternetAddress from, InternetAddress[] recipients,
-			String subject, String htmlTemplate,
-			Map<String, Object> htmlBodyProps, Attachment[] attachments,
-			CidImage[] cidImages) {
-		this(mailProps, userName, password, from, recipients, subject, htmlTemplate, htmlBodyProps);
+			InternetAddress from, InternetAddress[] recipients, String subject,
+			String htmlTemplate, Map<String, Object> htmlBodyProps,
+			Attachment[] attachments, CidImage[] cidImages) {
+		this(mailProps, userName, password, from, recipients, subject,
+				htmlTemplate, htmlBodyProps);
 		this.attachments = Arrays.asList(attachments);
 		this.cidImages = Arrays.asList(cidImages);
 	}
@@ -82,35 +84,43 @@ public class BeanMail {
 	public void setFrom(InternetAddress from) {
 		this.from = from;
 	}
-	
+
 	public InternetAddress[] getRecipients() {
 		return recipients;
 	}
-	
+
 	public void setRecipients(InternetAddress[] recipients) {
 		this.recipients = recipients;
 	}
-	
+
+	public InternetAddress[] getRecipientsBcc() {
+		return recipientsBcc;
+	}
+
+	public void setRecipientsBcc(InternetAddress[] recipientsBcc) {
+		this.recipientsBcc = recipientsBcc;
+	}
+
 	public String getSubject() {
 		return subject;
 	}
-	
+
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	
+
 	public String getHtmlTemplate() {
 		return htmlTemplate;
 	}
-	
+
 	public void setHtmlTemplate(String htmlTemplate) {
 		this.htmlTemplate = htmlTemplate;
 	}
-	
+
 	public Map<String, Object> getHtmlBodyProps() {
 		return htmlBodyProps;
 	}
-	
+
 	public void setHtmlBodyProps(Map<String, Object> htmlBodyProps) {
 		this.htmlBodyProps = htmlBodyProps;
 	}
@@ -130,5 +140,5 @@ public class BeanMail {
 	public void setCidImages(List<CidImage> cidImages) {
 		this.cidImages = cidImages;
 	}
-	
+
 }
