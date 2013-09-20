@@ -39,13 +39,14 @@ public class Principal {
 		BeanMail beanMail = new BeanMail(props, props.getProperty("email.username"),
 				props.getProperty("email.password"), new InternetAddress(props.getProperty("email.from")),
 				new InternetAddress[] {
-						new InternetAddress("ovelasco@magnabyte.com.mx"),
-						new InternetAddress("eesqueda@magnabyte.com.mx"),
-						new InternetAddress("iortega@magnabyte.com.mx")},
+//						new InternetAddress("ovelasco@magnabyte.com.mx"),
+//						new InternetAddress("eesqueda@magnabyte.com.mx"),
+						new InternetAddress("ovelasco@hotmail.com")},
 				props.getProperty("email.subject"), props.getProperty("email.template"),
-				getHtmlBodyProps());
+				getHtmlBodyProps(), new ArrayList<Attachment>(), new ArrayList<CidImage>());
 
-		sendMail.setup(beanMail);
+		sendMail.initialize(beanMail);
+		sendMail.setupMail();
 		sendMail.send();
 	}
 	

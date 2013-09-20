@@ -1,5 +1,7 @@
 package com.omkbron.sendemail;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,6 +16,8 @@ public class BeanMail {
 	private String subject;
 	private String htmlTemplate;
 	private Map<String, Object> htmlBodyProps;
+	private List<Attachment> attachments;
+	private List<CidImage> cidImages;
 
 	public BeanMail(Properties mailProps, String userName, String password,
 			InternetAddress from, InternetAddress[] recipients, String subject,
@@ -26,6 +30,25 @@ public class BeanMail {
 		this.subject = subject;
 		this.htmlTemplate = htmlTemplate;
 		this.htmlBodyProps = htmlBodyProps;
+	}
+	
+	public BeanMail(Properties mailProps, String userName, String password,
+			InternetAddress from, InternetAddress[] recipients, String subject,
+			String htmlTemplate, Map<String, Object> htmlBodyProps,
+			List<Attachment> attachments, List<CidImage> cidImages) {
+		this(mailProps, userName, password, from, recipients, subject, htmlTemplate, htmlBodyProps);
+		this.attachments = attachments;
+		this.cidImages = cidImages;
+	}
+	
+	public BeanMail(Properties mailProps, String userName, String password,
+			InternetAddress from, InternetAddress[] recipients,
+			String subject, String htmlTemplate,
+			Map<String, Object> htmlBodyProps, Attachment[] attachments,
+			CidImage[] cidImages) {
+		this(mailProps, userName, password, from, recipients, subject, htmlTemplate, htmlBodyProps);
+		this.attachments = Arrays.asList(attachments);
+		this.cidImages = Arrays.asList(cidImages);
 	}
 
 	public Properties getMailProps() {
@@ -91,4 +114,21 @@ public class BeanMail {
 	public void setHtmlBodyProps(Map<String, Object> htmlBodyProps) {
 		this.htmlBodyProps = htmlBodyProps;
 	}
+
+	public List<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	public List<CidImage> getCidImages() {
+		return cidImages;
+	}
+
+	public void setCidImages(List<CidImage> cidImages) {
+		this.cidImages = cidImages;
+	}
+	
 }

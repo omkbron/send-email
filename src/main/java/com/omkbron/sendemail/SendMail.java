@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -28,29 +31,15 @@ import freemarker.template.TemplateException;
  */
 public class SendMail {
 	private BeanMail beanMail;
+	private Session session; 
+	private Message message;
+	private Multipart multipart;
 
-	/**
-	 * Inicializa el objeto <code>BeanMail</code> <p>
-	 * 
-	 * El cual sirve para configurar los parametros necesarios para enviar el mail <p>
-	 * @param beanMail BeanMail object
-	 */
-	public void setup(BeanMail beanMail) {
+	public void initialize(BeanMail beanMail) {
 		this.beanMail = beanMail;
 	}
 
-	/**
-	 * Envía el mail con la configuracion obtenida del objeto
-	 * <code>BeanMail</code> <p> inicializado con el metodo
-	 * <code>setup</code>
-	 * 
-	 * @throws AddressException
-	 * @throws MessagingException
-	 * @throws IOException
-	 * @throws TemplateException
-	 */
-	public void send() throws AddressException, MessagingException, IOException, TemplateException {
-		Session session; 
+	public void setupMail() throws AddressException, MessagingException, IOException, TemplateException {
 		if (Boolean.parseBoolean(beanMail.getMailProps().getProperty("mail.smtp.auth"))){
 			session = Session.getDefaultInstance(beanMail.getMailProps(),
 					new Authenticator() {
@@ -64,7 +53,7 @@ public class SendMail {
 			session.setDebug(false);
 		}
 		
-		Message message = new MimeMessage(session);
+		message = new MimeMessage(session);
 		
 		message.setFrom(beanMail.getFrom());
 		message.setRecipients(Message.RecipientType.TO, beanMail.getRecipients());
@@ -72,6 +61,10 @@ public class SendMail {
 		message.setSentDate(new Date());
 		message.saveChanges();
 		
+		addBodyMessage();
+	}
+	
+	public void addBodyMessage() throws IOException, TemplateException, MessagingException {
 		BodyPart body = new MimeBodyPart();
 		
 		Configuration cfg = new Configuration();
@@ -81,11 +74,39 @@ public class SendMail {
 		
 		body.setContent(out.toString(), "text/html");
 		
-		Multipart multipart = new MimeMultipart();
+		multipart = new MimeMultipart("related");
 		multipart.addBodyPart(body);
 		
-		message.setContent(multipart, "text/html");
+		addAttachments();
+		addCidImages();
 		
+		message.setContent(multipart, "text/html");
+	}
+
+	private void addAttachments() throws MessagingException {
+		BodyPart body;
+		for (Attachment attachment : beanMail.getAttachments()) {
+			body = new MimeBodyPart();
+			DataSource fds = new FileDataSource(attachment.getFileName());
+			body.setDataHandler(new DataHandler(fds));
+			body.setFileName(attachment.getFileName());
+			multipart.addBodyPart(body);			
+		}
+		
+	}
+	
+	private void addCidImages() throws MessagingException {
+		BodyPart body;
+		for (CidImage cidImage : beanMail.getCidImages()) {
+			body = new MimeBodyPart();
+			DataSource fds = new FileDataSource(cidImage.getFileName());
+			body.setDataHandler(new DataHandler(fds));
+			body.setHeader("Content-ID", cidImage.getCid());
+			multipart.addBodyPart(body);
+		}
+	}
+
+	public void send() throws MessagingException {
 		Transport.send(message);
 		
 		System.out.println("Mensaje enviado...");
