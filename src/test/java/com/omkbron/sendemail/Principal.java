@@ -11,10 +11,11 @@ import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
-import com.omkbron.sendemail.BeanMail;
-import com.omkbron.sendemail.SendMail;
+import com.omkbron.sendemail.model.Attachment;
+import com.omkbron.sendemail.model.BeanMail;
+import com.omkbron.sendemail.model.CidImage;
+import com.omkbron.sendemail.service.SendMail;
 
 import freemarker.template.TemplateException;
 
@@ -36,14 +37,21 @@ public class Principal {
 			e.printStackTrace();
 		}
 
-		BeanMail beanMail = new BeanMail(props, props.getProperty("email.username"),
-				props.getProperty("email.password"), new InternetAddress(props.getProperty("email.from")),
-				new InternetAddress[] {
-//						new InternetAddress("ovelasco@magnabyte.com.mx"),
-//						new InternetAddress("eesqueda@magnabyte.com.mx"),
-						new InternetAddress("ovelasco@hotmail.com")},
-				props.getProperty("email.subject"), props.getProperty("email.template"),
-				getHtmlBodyProps());
+		String[] recipients = new String[] {
+//			"ovelasco@magnabyte.com.mx",
+//			"eesqueda@magnabyte.com.mx",
+			"ovelasco@hotmail.com"
+		};
+		
+		BeanMail beanMail = new BeanMail();
+		beanMail.setMailProps(props);
+		beanMail.setUserName(props.getProperty("email.username"));
+		beanMail.setPassword(props.getProperty("email.password"));
+		beanMail.setFrom(props.getProperty("email.from"));
+		beanMail.setRecipients(recipients);
+		beanMail.setSubject(props.getProperty("email.subject"));		
+		beanMail.setHtmlTemplate(props.getProperty("email.template"));
+		beanMail.setHtmlBodyProps(getHtmlBodyProps());
 		beanMail.setAttachments(new ArrayList<Attachment>());
 		beanMail.setCidImages(new ArrayList<CidImage>());
 		sendMail.initialize(beanMail);

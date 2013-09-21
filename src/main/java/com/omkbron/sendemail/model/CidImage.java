@@ -1,4 +1,4 @@
-package com.omkbron.sendemail;
+package com.omkbron.sendemail.model;
 
 public class CidImage {
 	private String cid;

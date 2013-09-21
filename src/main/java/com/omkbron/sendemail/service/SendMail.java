@@ -1,6 +1,7 @@
-package com.omkbron.sendemail;
+package com.omkbron.sendemail.service;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Date;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -17,10 +19,16 @@ import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.omkbron.sendemail.model.Attachment;
+import com.omkbron.sendemail.model.BeanMail;
+import com.omkbron.sendemail.model.CidImage;
+
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -34,6 +42,15 @@ public class SendMail {
 	private Session session; 
 	private Message message;
 	private Multipart multipart;
+	private String messageStatus;
+	
+	public String getMessageStatus() {
+		return messageStatus;
+	}
+	
+	public void setMessageStatus(String messageStatus) {
+		this.messageStatus = messageStatus;
+	}
 
 	public void initialize(BeanMail beanMail) {
 		this.beanMail = beanMail;
@@ -55,9 +72,9 @@ public class SendMail {
 		
 		message = new MimeMessage(session);
 		
-		message.setFrom(beanMail.getFrom());
-		message.setRecipients(Message.RecipientType.TO, beanMail.getRecipients());
-		message.setRecipients(Message.RecipientType.BCC, beanMail.getRecipients());
+		message.setFrom(new InternetAddress(beanMail.getFrom()));
+		message.setRecipients(Message.RecipientType.TO, getRecipients(beanMail.getRecipients()));
+		message.setRecipients(Message.RecipientType.BCC, getRecipients(beanMail.getRecipientsBcc()));
 		message.setSubject(beanMail.getSubject());
 		message.setSentDate(new Date());
 		message.saveChanges();
@@ -65,6 +82,24 @@ public class SendMail {
 		addBodyMessage();
 	}
 	
+	private Address[] getRecipients(String[] beanMailRecipients) throws AddressException {
+		InternetAddress [] recipients;
+		int numRecipients = 0;
+		if (beanMailRecipients != null) {
+			numRecipients = beanMailRecipients.length;
+			recipients = new InternetAddress[numRecipients];
+			
+			for (int i = 0; i < numRecipients; i++) {
+				InternetAddress internetAddress = new InternetAddress(beanMailRecipients[i]);
+				recipients[i] = internetAddress;
+			}
+			
+			return recipients;
+		}
+		
+		return new InternetAddress[numRecipients];
+	}
+
 	public void addBodyMessage() throws IOException, TemplateException, MessagingException {
 		BodyPart body = new MimeBodyPart();
 		
@@ -89,7 +124,7 @@ public class SendMail {
 		if (beanMail.getAttachments() != null) {
 			for (Attachment attachment : beanMail.getAttachments()) {
 				body = new MimeBodyPart();
-				DataSource fds = new FileDataSource(attachment.getFileName());
+				DataSource fds = new FileDataSource(attachment.getPathFile() + attachment.getFileName());
 				body.setDataHandler(new DataHandler(fds));
 				body.setFileName(attachment.getFileName());
 				multipart.addBodyPart(body);			
@@ -110,9 +145,13 @@ public class SendMail {
 		}
 	}
 
-	public void send() throws MessagingException {
-		Transport.send(message);
-		
-		System.out.println("Mensaje enviado...");
+	public void send() {
+		try {
+			Transport.send(message);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			messageStatus = e.getMessage();
+		}
+		messageStatus = "ENVIADO";
 	}
 }
