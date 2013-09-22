@@ -1,7 +1,7 @@
 package com.omkbron.sendemail.service;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
@@ -28,7 +28,6 @@ import com.omkbron.sendemail.model.Attachment;
 import com.omkbron.sendemail.model.BeanMail;
 import com.omkbron.sendemail.model.CidImage;
 
-import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -104,6 +103,7 @@ public class SendMail {
 		BodyPart body = new MimeBodyPart();
 		
 		Configuration cfg = new Configuration();
+		cfg.setDirectoryForTemplateLoading(new File(beanMail.getDirectoryHtmlTemplate()));
 		Template template = cfg.getTemplate(beanMail.getHtmlTemplate());
 		Writer out = new StringWriter();
 		template.process(beanMail.getHtmlBodyProps(), out);
@@ -137,7 +137,7 @@ public class SendMail {
 		if (beanMail.getCidImages() != null) {
 			for (CidImage cidImage : beanMail.getCidImages()) {
 				body = new MimeBodyPart();
-				DataSource fds = new FileDataSource(cidImage.getFileName());
+				DataSource fds = new FileDataSource(cidImage.getPathFile() + cidImage.getFileName());
 				body.setDataHandler(new DataHandler(fds));
 				body.setHeader("Content-ID", cidImage.getCid());
 				multipart.addBodyPart(body);

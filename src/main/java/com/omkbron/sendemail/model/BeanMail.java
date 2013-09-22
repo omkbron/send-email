@@ -12,6 +12,7 @@ public class BeanMail {
 	private String[] recipients;
 	private String[] recipientsBcc;
 	private String subject;
+	private String directoryHtmlTemplate;
 	private String htmlTemplate;
 	private Map<String, Object> htmlBodyProps;
 	private List<Attachment> attachments;
@@ -71,6 +72,14 @@ public class BeanMail {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+	
+	public String getDirectoryHtmlTemplate() {
+		return directoryHtmlTemplate;
+	}
+	
+	public void setDirectoryHtmlTemplate(String directoryHtmlTemplate) {
+		this.directoryHtmlTemplate = directoryHtmlTemplate;
 	}
 
 	public String getHtmlTemplate() {

@@ -1,13 +1,11 @@
 package com.omkbron.sendemail.model;
 
-public class CidImage {
+public class CidImage extends MailFile {
 	private String cid;
-	private String fileName;
 	
-	public CidImage(String cid, String fileName) {
-		super();
+	public CidImage(String cid, String pathFile, String fileName) {
+		super(pathFile, fileName);
 		this.cid = cid;
-		this.fileName = fileName;
 	}
 
 	public String getCid() {
@@ -16,14 +14,6 @@ public class CidImage {
 
 	public void setCid(String cid) {
 		this.cid = "<" + cid + ">";
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
 	}
 
 }
