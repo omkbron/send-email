@@ -12,6 +12,8 @@ import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
+import org.junit.Test;
+
 import com.omkbron.sendemail.model.Attachment;
 import com.omkbron.sendemail.model.BeanMail;
 import com.omkbron.sendemail.model.CidImage;
@@ -19,12 +21,13 @@ import com.omkbron.sendemail.service.SendMail;
 
 import freemarker.template.TemplateException;
 
-public class Principal {
-	public static void main(String[] args) throws AddressException,
+public class TestSendMail {
+	@Test
+	public void testSendMail() throws AddressException,
 			MessagingException, IOException, TemplateException {
 		SendMail sendMail = new SendMail();
 		Properties props = new Properties();
-		InputStream stream = Principal.class.getClassLoader()
+		InputStream stream = TestSendMail.class.getClassLoader()
 				.getResourceAsStream("mail.properties");
 		try {
 			if (stream != null) {
@@ -49,7 +52,8 @@ public class Principal {
 		beanMail.setPassword(props.getProperty("email.password"));
 		beanMail.setFrom(props.getProperty("email.from"));
 		beanMail.setRecipients(recipients);
-		beanMail.setSubject(props.getProperty("email.subject"));		
+		beanMail.setSubject(props.getProperty("email.subject"));
+		beanMail.setDirectoryHtmlTemplate(props.getProperty("email.dirtemplate"));
 		beanMail.setHtmlTemplate(props.getProperty("email.template"));
 		beanMail.setHtmlBodyProps(getHtmlBodyProps());
 		beanMail.setAttachments(new ArrayList<Attachment>());
