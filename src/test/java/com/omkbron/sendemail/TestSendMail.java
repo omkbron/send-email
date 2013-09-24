@@ -14,9 +14,7 @@ import javax.mail.internet.AddressException;
 
 import org.junit.Test;
 
-import com.omkbron.sendemail.model.Attachment;
 import com.omkbron.sendemail.model.BeanMail;
-import com.omkbron.sendemail.model.CidImage;
 import com.omkbron.sendemail.service.SendMail;
 
 import freemarker.template.TemplateException;
@@ -43,7 +41,7 @@ public class TestSendMail {
 		String[] recipients = new String[] {
 //			"ovelasco@magnabyte.com.mx",
 //			"eesqueda@magnabyte.com.mx",
-			"ovelasco@hotmail.com"
+			"omvp29@hotmail.com"
 		};
 		
 		BeanMail beanMail = new BeanMail();
@@ -56,8 +54,6 @@ public class TestSendMail {
 		beanMail.setDirectoryHtmlTemplate(props.getProperty("email.dirtemplate"));
 		beanMail.setHtmlTemplate(props.getProperty("email.template"));
 		beanMail.setHtmlBodyProps(getHtmlBodyProps());
-		beanMail.setAttachments(new ArrayList<Attachment>());
-		beanMail.setCidImages(new ArrayList<CidImage>());
 		sendMail.initialize(beanMail);
 		sendMail.setupMail();
 		sendMail.send();

@@ -16,6 +16,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -148,10 +149,19 @@ public class SendMail {
 	public void send() {
 		try {
 			Transport.send(message);
+			messageStatus = "ENVIADO";
 		} catch (MessagingException e) {
 			e.printStackTrace();
 			messageStatus = e.getMessage();
 		}
-		messageStatus = "ENVIADO";
+	}
+	
+	public static void main(String[] args) {
+		try {
+			throw new SendFailedException("test");
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
