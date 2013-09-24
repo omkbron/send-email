@@ -8,7 +8,9 @@ public class Attachment extends MailFile {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("MailFile [fileName=");
+		builder.append("Archivo [ruta=");
+		builder.append(pathFile);
+		builder.append(", nombre=");
 		builder.append(fileName);
 		builder.append("]");
 		return builder.toString();

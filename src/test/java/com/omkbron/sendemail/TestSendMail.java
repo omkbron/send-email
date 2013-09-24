@@ -54,8 +54,7 @@ public class TestSendMail {
 		beanMail.setDirectoryHtmlTemplate(props.getProperty("email.dirtemplate"));
 		beanMail.setHtmlTemplate(props.getProperty("email.template"));
 		beanMail.setHtmlBodyProps(getHtmlBodyProps());
-		sendMail.initialize(beanMail);
-		sendMail.setupMail();
+		sendMail.setupMail(beanMail);
 		sendMail.send();
 	}
 	

@@ -52,11 +52,9 @@ public class SendMail {
 		this.messageStatus = messageStatus;
 	}
 
-	public void initialize(BeanMail beanMail) {
-		this.beanMail = beanMail;
-	}
-
-	public void setupMail() throws AddressException, MessagingException, IOException, TemplateException {
+	public void setupMail(BeanMail beanMailArg) throws AddressException, MessagingException, IOException, TemplateException {
+		this.beanMail = beanMailArg;
+		
 		if (Boolean.parseBoolean(beanMail.getMailProps().getProperty("mail.smtp.auth"))){
 			session = Session.getDefaultInstance(beanMail.getMailProps(),
 					new Authenticator() {
